@@ -50,8 +50,8 @@ on:
         - releases
         - teams
 
-      targeting_value:
-        description: 'Targeting value'
+      targeting_filter_value:
+        description: 'Targeting filter value'
         type: string
         required: false
 
@@ -77,11 +77,22 @@ on:
         options:
         - ignore
         - include
-       
+
+####################################################################
+### Include permissions for OIDC
+#####################################################################
+permissions:
+  id-token: write
+  contents: read # If not writing back to the repo set to read
+        
 ####################################################################
 #  Set up the environment
 #####################################################################
-env:  
+env:
+  # AWS S3 bucket is the host part of the S3 bucket
+  AWS_S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  
   # License key
   LIQUIBASE_LICENSE_KEY: ${{ secrets.LIQUIBASE_LICENSE_KEY }}
   
@@ -118,45 +129,89 @@ env:
   LIQUIBASE_DBCLHISTORY_ENABLED: true
 
   # Targeting
-  LB_FILTER: ${{ inputs.targeting_filter }}
-  LB_FILTER_VALUE: ${{ inputs.targeting_value }}
   LB_CHECKNAME: ${{ inputs.targeting_checkname }}
+  LB_TARGETING_TYPE: ${{ inputs.targeting_type }}
+  LB_FILTER: ${{ inputs.targeting_filter }}
+  LB_FILTER_VALUE: ${{ inputs.targeting_filter_value }}
+  LB_TARGETING_EXPIRATION: ${{ inputs.targeting_expiration }}
+  LB_TARGETING_ID: ${{ inputs.targeting_id }}
+  LB_TARGETING_REASON: ${{ inputs.targeting_reason }}
+
+  LIQUIBASE_COMMAND_CHECKS_TARGETING_ADD_AUTO_UPDATE: false
 
 jobs:
   #########################################################################
-  #  Run Utilities
+  #  Run Checks Targeting
   #########################################################################
 
-  database-utilities:
+  database-checks-targeting:
     runs-on: [self-hosted]
     environment: ${{ inputs.environment }}
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Liquibase Environment
-      uses: ./.github/workflows/setup-liquibase
- 
-    - name: Liquibase Utilities Flow
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+###
+### Retrieve AWS credentials
+### Requires an AWS IAM role with token.actions.githubusercontent.com web identity provider
+### Provider URL: https://token.actions.githubusercontent.com
+### Audience: sts.amazonaws.com
+###
+    - name: Retrieving AWS credentials
+      uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        aws-region: ${{ vars.AWS_REGION }}
+
+    - name: Log Inputs
       shell: bash
       run: |
-        if [[ "${{ inputs.utility }}" != targeting_* ]]; then
-          FLOW_FILE="liquibase-utilities.flowfile.yaml"
-        else
-          FLOW_FILE="liquibase-checks-targeting.flowfile.yaml"
-        fi
-        echo "Using flow file: $FLOW_FILE"
-        liquibase flow --flow-file="$FLOW_FILE"
-        
-    - name: Upload Generate Changelog Artifact
-      if: github.event.inputs.utility == 'generate-changelog-zip'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.environment }}-changelog.oracle.zip
-        path: generatechangelogs
-        
-    - name: Upload Snapshot Artifact
-      if: github.event.inputs.utility == 'snapshot-zip'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.environment }}-snapshot.zip
-        path: snapshots
+        echo "=================================================="
+        echo " Liquibase Checks Targeting - Run Inputs"
+        echo "=================================================="
+        echo "Environment:            ${{ inputs.environment }}"
+        echo "Utility:                ${{ inputs.utility }}"
+        echo "Targeting Check Name:   ${{ inputs.targeting_checkname }}"
+        echo "Targeting Filter:       ${{ inputs.targeting_filter }}"
+        echo "Targeting Filter Value: ${{ inputs.targeting_filter_value }}"
+        echo "Targeting Expiration:   ${{ inputs.targeting_expiration }}"
+        echo "Targeting ID:           ${{ inputs.targeting_id }}"
+        echo "Targeting Reason:       ${{ inputs.targeting_reason }}"
+        echo "Targeting Type:         ${{ inputs.targeting_type }}"
+        echo "Triggered By:           ${{ github.actor }}"
+        echo "=================================================="
+
+        {
+          echo "### Liquibase Checks Targeting - Run Inputs"
+          echo ""
+          echo "| Input | Value |"
+          echo "|---|---|"
+          echo "| Environment | ${{ inputs.environment }} |"
+          echo "| Utility | ${{ inputs.utility }} |"
+          echo "| Targeting Check Name | ${{ inputs.targeting_checkname }} |"
+          echo "| Targeting Filter | ${{ inputs.targeting_filter }} |"
+          echo "| Targeting Filter Value | ${{ inputs.targeting_filter_value }} |"
+          echo "| Targeting Expiration | ${{ inputs.targeting_expiration }} |"
+          echo "| Targeting ID | ${{ inputs.targeting_id }} |"
+          echo "| Targeting Reason | ${{ inputs.targeting_reason }} |"
+          echo "| Targeting Type | ${{ inputs.targeting_type }} |"
+          echo "| Triggered By | ${{ github.actor }} |"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Setup Liquibase Environment
+      uses: ./.github/workflows/setup-liquibase
+    
+    - name: Liquibase Checks Targeting Flow
+      shell: bash
+      run: |
+        liquibase flow --flow-file=liquibase-checks-targeting.flowfile.yaml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Auto-generated
+
+    # Commenting because file was moved to S3    
+    # - name: Upload Checks Targeting Settings Artifact
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ inputs.environment }}-checks-targeting-settings
+    #     path: checks/liquibase.checks-settings.targeting.yaml
+    #     if-no-files-found: error
