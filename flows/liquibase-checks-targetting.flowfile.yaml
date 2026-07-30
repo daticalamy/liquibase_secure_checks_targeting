@@ -1,0 +1,21 @@
+##########           LIQUIBASE FLOWFILE                ##########
+##########  learn more http://docs.liquibase.com/flow  ##########
+
+globalVariables:
+  ENV: ${ENVIRONMENT}
+  UTILITY: ${LB_UTILITY}
+  FILTER: ${LB_FILTER}
+  FILTER_VALUE: ${LB_FILTER_VALUE}
+  CHECKNAME: ${LB_CHECKNAME}
+
+stages:
+  Utility:
+    actions:
+    
+      - type: shell
+        command: echo 'Running ${UTILITY}'    
+
+      - type: liquibase
+        if: "${UTILITY} == targeting_add"
+        command: checks targeting add
+        cmdArgs: {  ${FILTER}-filter: ${FILTER_VALUE}, checkname: ${CHECKNAME} }
