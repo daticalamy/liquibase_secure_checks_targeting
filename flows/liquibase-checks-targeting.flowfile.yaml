@@ -4,6 +4,9 @@
 globalVariables:
   ENV: ${ENVIRONMENT}
   UTILITY: ${LB_UTILITY}
+  FILTER: ${LB_FILTER}
+  FILTER_VALUE: ${LB_FILTER_VALUE}
+  CHECKNAME: ${LB_CHECKNAME}
 
 stages:
   Utility:
@@ -13,13 +16,6 @@ stages:
         command: echo 'Running ${UTILITY}'    
 
       - type: liquibase
-        if: "${UTILITY} == connect"
-        command: connect
-
-      - type: liquibase
-        if: "${UTILITY} == history"
-        command: history
-
-      - type: liquibase
-        if: "${UTILITY} == status"
-        command: status
+        if: "${UTILITY} == targeting_add"
+        command: checks targeting add
+        cmdArgs: {  "${FILTER}-filter": "${FILTER_VALUE}", checkname: "${CHECKNAME}" }

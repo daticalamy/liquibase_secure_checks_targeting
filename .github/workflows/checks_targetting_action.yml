@@ -1,8 +1,8 @@
 ####################################################################
 #  GitHub Action to perform various Liquibase utilities.
 #####################################################################
-name: 'Liquibase Secure Utilities'
-run-name: ${{ inputs.environment}} utilities by ${{ github.actor }}
+name: 'Liquibase Secure Checks Targeting'
+run-name: ${{ inputs.environment}} checks targeting by ${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -19,9 +19,64 @@ on:
         type: choice
         required: true
         options:
-        - connect
-        - history
-        - status
+        - targeting_add
+        - targeting_list
+        - targeting_remove
+
+      targeting_checkname:
+        description: 'Check name to target'
+        type: choice
+        required: true
+        options:
+          - SqlGrantWarn                # Warn on Detection of 'GRANT' Statements
+          - SqlRevokeWarn                # Warn on Detection of 'REVOKE' Statements
+          - ChangeDropTableWarn          # Warn when 'DROP TABLE' detected
+          - ChangeDropColumnWarn         # Warn when 'DROP COLUMN' detected
+          - ModifyDataTypeWarn           # Warn when 'MODIFY <column>' detected
+          - SqlSelectStarWarn            # Warn on Detection of 'SELECT *'
+          - ChangeTruncateTableWarn      # Warn when 'TRUNCATE TABLE' detected
+          - SqlGrantOptionWarn           # Warn on Detection of grant containing 'WITH GRANT OPTION'
+          - SqlGrantAdminWarn            # Warn on Detection of grant containing 'WITH ADMIN OPTION'
+          - RollbackRequired             # Rollback Required for Changeset
+          - FormattedSqlHeaderRequired   # Check for Formatted SQL header
+
+      targeting_filter:
+        description: 'Targeting filter'
+        type: choice
+        required: false
+        options:
+        - conditions
+        - keywords
+        - releases
+        - teams
+
+      targeting_value:
+        description: 'Targeting value'
+        type: string
+        required: false
+
+      targeting_expiration:
+        description: 'Targeting expiration (eg. 2h, 30m, 24h30m, 2w3d)'
+        type: string
+        required: false
+
+      targeting_id:
+        description: 'Targeting ID'
+        type: string
+        required: false
+
+      targeting_reason:
+        description: 'Targeting Reason'
+        type: string
+        required: false
+      
+      targeting_type:
+        description: 'Targeting Type'
+        type: choice
+        required: false
+        options:
+        - ignore
+        - include
        
 ####################################################################
 #  Set up the environment
@@ -62,6 +117,11 @@ env:
   # History Table
   LIQUIBASE_DBCLHISTORY_ENABLED: true
 
+  # Targeting
+  LB_FILTER: ${{ inputs.targeting_filter }}
+  LB_FILTER_VALUE: ${{ inputs.targeting_value }}
+  LB_CHECKNAME: ${{ inputs.targeting_checkname }}
+
 jobs:
   #########################################################################
   #  Run Utilities
@@ -77,7 +137,15 @@ jobs:
       uses: ./.github/workflows/setup-liquibase
  
     - name: Liquibase Utilities Flow
-      run: liquibase flow --flow-file=liquibase-utilities.flowfile.yaml
+      shell: bash
+      run: |
+        if [[ "${{ inputs.utility }}" != targeting_* ]]; then
+          FLOW_FILE="liquibase-utilities.flowfile.yaml"
+        else
+          FLOW_FILE="liquibase-checks-targeting.flowfile.yaml"
+        fi
+        echo "Using flow file: $FLOW_FILE"
+        liquibase flow --flow-file="$FLOW_FILE"
         
     - name: Upload Generate Changelog Artifact
       if: github.event.inputs.utility == 'generate-changelog-zip'
