@@ -14,5 +14,5 @@ runs:
     - name: Setup Liquibase Secure
       uses: liquibase/setup-liquibase@v2
       with:
-        version: '5.2.2'
+        version: '5.2.1'
         edition: 'secure'
