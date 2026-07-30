@@ -18,4 +18,4 @@ stages:
       - type: liquibase
         if: "${UTILITY} == targeting_add"
         command: checks targeting add
-        cmdArgs: {  "${FILTER}-filter": "${FILTER_VALUE}", checkname: "${CHECKNAME}" }
+        cmdArgs: {  checkname: "${CHECKNAME}", type: "${LB_TARGETING_TYPE}", targeting-file: "checks/liquibase.checks-settings.targeting.yaml", "${FILTER}-filter": "${FILTER_VALUE}" }
