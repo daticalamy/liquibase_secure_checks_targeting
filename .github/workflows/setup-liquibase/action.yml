@@ -11,8 +11,24 @@ runs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Liquibase Secure
-      uses: liquibase/setup-liquibase@v2
-      with:
-        version: '5.2.1'
-        edition: 'secure'
+    # ============================================================
+    # TEMPORARY: using the installed Liquibase at /opt/liquibase
+    # To REVERT to the GitHub Action:
+    #   1. Delete/comment out the "Use installed Liquibase" step below
+    #   2. Uncomment the "Setup Liquibase Secure" step below
+    # ============================================================
+    - name: Use installed Liquibase
+      shell: bash
+      run: |
+        if [ ! -x /opt/liquibase/liquibase ]; then
+          echo "::error::/opt/liquibase/liquibase not found or not executable"
+          exit 1
+        fi
+        echo "/opt/liquibase" >> "$GITHUB_PATH"
+        /opt/liquibase/liquibase --version
+
+    # - name: Setup Liquibase Secure
+    #   uses: liquibase/setup-liquibase@v2
+    #   with:
+    #     version: '5.2.1'
+    #     edition: 'secure'
