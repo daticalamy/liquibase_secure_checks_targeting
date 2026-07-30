@@ -6,7 +6,7 @@ globalVariables:
   UTILITY: ${LB_UTILITY}
   FILTER: ${LB_FILTER}
   FILTER_VALUE: ${LB_FILTER_VALUE}
-  CHECKNAME: ${LB_CHECKNAME}
+  CHECKNAME: ${LB_CHECKNAME:-}
 
 stages:
   Utility:
