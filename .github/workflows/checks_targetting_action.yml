@@ -156,6 +156,16 @@ jobs:
 ### Provider URL: https://token.actions.githubusercontent.com
 ### Audience: sts.amazonaws.com
 ###
+    - name: Debug OIDC token claims
+      shell: bash
+      run: |
+        TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r '.value')
+        echo "$TOKEN" | cut -d '.' -f2 | base64 -d 2>/dev/null | jq .
+      env:
+        ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+        ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+
     - name: Retrieving AWS credentials
       uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
       with:
