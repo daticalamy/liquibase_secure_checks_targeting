@@ -77,11 +77,22 @@ on:
         options:
         - ignore
         - include
-       
+
+####################################################################
+### Include permissions for OIDC
+#####################################################################
+permissions:
+  id-token: write
+  contents: read # If not writing back to the repo set to read
+        
 ####################################################################
 #  Set up the environment
 #####################################################################
-env:  
+env:
+  # AWS S3 bucket is the host part of the S3 bucket
+  AWS_S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  
   # License key
   LIQUIBASE_LICENSE_KEY: ${{ secrets.LIQUIBASE_LICENSE_KEY }}
   
@@ -139,6 +150,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+###
+### Retrieve AWS credentials
+### Requires an AWS IAM role with token.actions.githubusercontent.com web identity provider
+### Provider URL: https://token.actions.githubusercontent.com
+### Audience: sts.amazonaws.com
+###
+    - name: Retrieving AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        aws-region: ${{ vars.AWS_REGION }}
+
     - name: Log Inputs
       shell: bash
       run: |
@@ -181,6 +204,8 @@ jobs:
       shell: bash
       run: |
         liquibase flow --flow-file=liquibase-checks-targeting.flowfile.yaml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Auto-generated
 
     - name: Upload Checks Targeting Settings Artifact
       if: always()

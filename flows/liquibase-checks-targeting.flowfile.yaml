@@ -11,19 +11,20 @@ globalVariables:
   TARGETING_ID: ${LB_TARGETING_ID}
   TARGETING_REASON: ${LB_TARGETING_REASON}
   TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
+  AWS_S3_BUCKET: ${AWS_S3_BUCKET}
 
 stages:
 
   Checks Targeting:
     actions:    
-    
+
       - type: shell
         if: "${UTILITY} == targeting_add"
         command: |
           #!/usr/bin/env bash
           set -e
 
-          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="checks/liquibase.checks-settings.targeting.yaml")
+          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml")
 
           if [[ -n "${FILTER}" && -n "${FILTER_VALUE}" ]]; then
             ARGS+=("--${FILTER}-filter=${FILTER_VALUE}")
