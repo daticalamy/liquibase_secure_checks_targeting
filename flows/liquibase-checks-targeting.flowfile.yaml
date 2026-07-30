@@ -10,9 +10,9 @@ globalVariables:
   FILTER_VALUE: ${LB_FILTER_VALUE}
 
 stages:
-  Utility:
-    actions:
-    
+
+  Checks Targeting:
+    actions:    
       - type: shell
         command: echo 'Running ${UTILITY}'    
 

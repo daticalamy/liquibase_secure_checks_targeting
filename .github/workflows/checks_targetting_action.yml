@@ -177,3 +177,11 @@ jobs:
       shell: bash
       run: |
         liquibase flow --flow-file=liquibase-checks-targeting.flowfile.yaml
+
+    - name: Upload Checks Targeting Settings Artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.environment }}-checks-targeting-settings
+        path: checks/liquibase.checks-settings.targeting.yaml
+        if-no-files-found: error
