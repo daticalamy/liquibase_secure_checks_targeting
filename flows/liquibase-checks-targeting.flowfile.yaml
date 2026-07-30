@@ -4,9 +4,10 @@
 globalVariables:
   ENV: ${ENVIRONMENT}
   UTILITY: ${LB_UTILITY}
+  CHECKNAME: ${LB_CHECKNAME}
+  TARGETING_TYPE: ${LB_TARGETING_TYPE}
   FILTER: ${LB_FILTER}
   FILTER_VALUE: ${LB_FILTER_VALUE}
-  CHECKNAME: ${LB_CHECKNAME}
 
 stages:
   Utility:
@@ -18,4 +19,4 @@ stages:
       - type: liquibase
         if: "${UTILITY} == targeting_add"
         command: checks targeting add
-        cmdArgs: {  checkname: "${CHECKNAME}", type: "${LB_TARGETING_TYPE}", targeting-file: "checks/liquibase.checks-settings.targeting.yaml", "${FILTER}-filter": "${FILTER_VALUE}" }
+        cmdArgs: {  checkname: "${CHECKNAME}", type: "${TARGETING_TYPE}", targeting-file: "checks/liquibase.checks-settings.targeting.yaml", "${FILTER}-filter": "${FILTER_VALUE}" }

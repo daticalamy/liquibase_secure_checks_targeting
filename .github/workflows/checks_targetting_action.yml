@@ -73,7 +73,7 @@ on:
       targeting_type:
         description: 'Targeting Type'
         type: choice
-        required: true
+        required: false
         options:
         - ignore
         - include
@@ -118,9 +118,10 @@ env:
   LIQUIBASE_DBCLHISTORY_ENABLED: true
 
   # Targeting
+  LB_CHECKNAME: ${{ inputs.targeting_checkname }}
+  LB_TARGETING_TYPE: ${{ inputs.targeting_type }}
   LB_FILTER: ${{ inputs.targeting_filter }}
   LB_FILTER_VALUE: ${{ inputs.targeting_value }}
-  LB_CHECKNAME: ${{ inputs.targeting_checkname }}
   LIQUIBASE_COMMAND_CHECKS_TARGETING_ADD_AUTO_UPDATE: false
 
 jobs:
