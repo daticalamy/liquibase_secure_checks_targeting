@@ -20,12 +20,12 @@ runs:
     - name: Use installed Liquibase
       shell: bash
       run: |
-        if [ ! -x /opt/liquibase/liquibase ]; then
-          echo "::error::/opt/liquibase/liquibase not found or not executable"
+        if [ ! -x /opt/liquibase/liquibase/liquibase ]; then
+          echo "::error::/opt/liquibase/liquibase/liquibase not found or not executable"
           exit 1
         fi
         echo "/opt/liquibase" >> "$GITHUB_PATH"
-        /opt/liquibase/liquibase --version
+        /opt/liquibase/liquibase/liquibase --version
 
     # - name: Setup Liquibase Secure
     #   uses: liquibase/setup-liquibase@v2
