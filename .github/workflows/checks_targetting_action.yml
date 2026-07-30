@@ -61,7 +61,7 @@ on:
         required: false
 
       targeting_id:
-        description: 'Targeting ID'
+        description: 'Targeting ID (required for targeting_remove)'
         type: string
         required: false
 

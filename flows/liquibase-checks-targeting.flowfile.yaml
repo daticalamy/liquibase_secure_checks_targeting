@@ -12,6 +12,7 @@ globalVariables:
   TARGETING_REASON: ${LB_TARGETING_REASON}
   TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
   AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+  TARGETING_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml
 
 stages:
 
@@ -24,7 +25,7 @@ stages:
           #!/usr/bin/env bash
           set -e
 
-          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml")
+          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="${TARGETING_FILE}")
 
           if [[ -n "${FILTER}" && -n "${FILTER_VALUE}" ]]; then
             ARGS+=("--${FILTER}-filter=${FILTER_VALUE}")
@@ -44,3 +45,36 @@ stages:
 
           echo "Running: liquibase checks targeting add ${ARGS[@]}"
           liquibase checks targeting add "${ARGS[@]}"
+
+      - type: shell
+        if: "${UTILITY} == targeting_remove"
+        command: |
+          #!/usr/bin/env bash
+          set -e
+
+          ARGS=(--id="${TARGETING_ID}" --targeting-file="${TARGETING_FILE}")
+
+          echo "Running: liquibase checks targeting remove ${ARGS[@]}"
+          liquibase checks targeting remove "${ARGS[@]}"
+
+      - type: shell
+        if: "${UTILITY} == targeting_list"
+        command: |
+          #!/usr/bin/env bash
+          set -e
+
+          ARGS=(--targeting-file="TARGETING_FILE")
+
+          echo "Running: liquibase checks targeting list (FULL) ${ARGS[@]}"
+          liquibase checks targeting list "${ARGS[@]}"
+
+## The endStage ALWAYS RUNS. 
+## So put actions here which you desire to perform whether previous stages' actions succeed or fail.
+## If you do not want any actions to ALWAYS RUN, simply delete the endStage from your flow file.
+
+endStage:
+  actions:
+    - type: liquibase
+      command: checks targeting list
+      cmdArgs: { targeting-file: "${TARGETING_FILE}" }
+          
