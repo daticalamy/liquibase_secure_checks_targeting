@@ -217,10 +217,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Auto-generated
 
-    - name: Upload Checks Targeting Settings Artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.environment }}-checks-targeting-settings
-        path: checks/liquibase.checks-settings.targeting.yaml
-        if-no-files-found: error
+    # Commenting because file was moved to S3    
+    # - name: Upload Checks Targeting Settings Artifact
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ inputs.environment }}-checks-targeting-settings
+    #     path: checks/liquibase.checks-settings.targeting.yaml
+    #     if-no-files-found: error
