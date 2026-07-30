@@ -1,0 +1,13 @@
+databaseChangeLog:
+
+- changeSet:
+    id: data_dml_test
+    author: asmith
+    changes:
+    - sqlFile:
+        path: data_dml_01.sql
+        relativeToChangelogFile: true
+    - rollback:
+        - sqlFile:
+            path: data_dml_01-rollback.sql
+            relativeToChangelogFile: true
