@@ -112,7 +112,7 @@ env:
   LIQUIBASE_COMMAND_DEFAULT_SCHEMA_NAME: abc
 
   # Search path (See https://docs.liquibase.com/concepts/changelogs/how-liquibase-finds-files.html)
-  LIQUIBASE_SEARCH_PATH: flows,checks,changelogs
+  LIQUIBASE_SEARCH_PATH: flows,changelogs,s3://${AWS_S3_BUCKET}/checks-targeting
 
   # The database changelog. See https://docs.liquibase.com/concepts/changelogs/working-with-changelogs.html
   LIQUIBASE_COMMAND_CHANGELOG_FILE: rootchangelog.yaml
