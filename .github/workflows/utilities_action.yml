@@ -133,7 +133,7 @@ jobs:
         if [[ "${{ inputs.utility }}" != targeting_* ]]; then
           FLOW_FILE="liquibase-utilities.flowfile.yaml"
         else
-          FLOW_FILE="liquibase-checks-targetting.flowfile.yaml"
+          FLOW_FILE="liquibase-checks-targeting.flowfile.yaml"
         fi
         echo "Using flow file: $FLOW_FILE"
         liquibase flow --flow-file="$FLOW_FILE"
