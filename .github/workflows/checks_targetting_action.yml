@@ -1,8 +1,8 @@
 ####################################################################
 #  GitHub Action to perform various Liquibase utilities.
 #####################################################################
-name: 'Liquibase Secure Utilities'
-run-name: ${{ inputs.environment}} utilities by ${{ github.actor }}
+name: 'Liquibase Secure Checks Targeting'
+run-name: ${{ inputs.environment}} checks targeting by ${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -19,12 +19,26 @@ on:
         type: choice
         required: true
         options:
-        - connect
-        - history
-        - status
         - targeting_add
         - targeting_list
         - targeting_remove
+
+      targeting_checkname:
+        description: 'Check name to target'
+        type: choice
+        required: true
+        options:
+          - SqlGrantWarn                # Warn on Detection of 'GRANT' Statements
+          - SqlRevokeWarn                # Warn on Detection of 'REVOKE' Statements
+          - ChangeDropTableWarn          # Warn when 'DROP TABLE' detected
+          - ChangeDropColumnWarn         # Warn when 'DROP COLUMN' detected
+          - ModifyDataTypeWarn           # Warn when 'MODIFY <column>' detected
+          - SqlSelectStarWarn            # Warn on Detection of 'SELECT *'
+          - ChangeTruncateTableWarn      # Warn when 'TRUNCATE TABLE' detected
+          - SqlGrantOptionWarn           # Warn on Detection of grant containing 'WITH GRANT OPTION'
+          - SqlGrantAdminWarn            # Warn on Detection of grant containing 'WITH ADMIN OPTION'
+          - RollbackRequired             # Rollback Required for Changeset
+          - FormattedSqlHeaderRequired   # Check for Formatted SQL header
 
       targeting_filter:
         description: 'Targeting filter'
@@ -38,11 +52,6 @@ on:
 
       targeting_value:
         description: 'Targeting value'
-        type: string
-        required: false
-
-      targeting_checkname:
-        description: 'Targeting check name'
         type: string
         required: false
 
