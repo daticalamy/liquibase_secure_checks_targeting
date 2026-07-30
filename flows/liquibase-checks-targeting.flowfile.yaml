@@ -8,15 +8,38 @@ globalVariables:
   TARGETING_TYPE: ${LB_TARGETING_TYPE}
   FILTER: ${LB_FILTER}
   FILTER_VALUE: ${LB_FILTER_VALUE}
+  TARGETING_ID: ${LB_TARGETING_ID}
+  TARGETING_REASON: ${LB_TARGETING_REASON}
+  TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
 
 stages:
 
   Checks Targeting:
     actions:    
+    
       - type: shell
-        command: echo 'Running ${UTILITY}'    
-
-      - type: liquibase
         if: "${UTILITY} == targeting_add"
-        command: checks targeting add
-        cmdArgs: {  checkname: "${CHECKNAME}", type: "${TARGETING_TYPE}", targeting-file: "checks/liquibase.checks-settings.targeting.yaml", "${FILTER}-filter": "${FILTER_VALUE}" }
+        command: |
+          #!/usr/bin/env bash
+          set -e
+
+          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="checks/liquibase.checks-settings.targeting.yaml")
+
+          if [[ -n "${FILTER}" && -n "${FILTER_VALUE}" ]]; then
+            ARGS+=("--${FILTER}-filter=${FILTER_VALUE}")
+          fi
+
+          if [[ -n "${TARGETING_ID}" ]]; then
+            ARGS+=(--id="${TARGETING_ID}")
+          fi
+
+          if [[ -n "${TARGETING_REASON}" ]]; then
+            ARGS+=(--reason="${TARGETING_REASON}")
+          fi
+
+          if [[ -n "${TARGETING_EXPIRATION}" ]]; then
+            ARGS+=(--expiration="${TARGETING_EXPIRATION}")
+          fi
+
+          echo "Running: liquibase checks targeting add ${ARGS[@]}"
+          liquibase checks targeting add "${ARGS[@]}"
