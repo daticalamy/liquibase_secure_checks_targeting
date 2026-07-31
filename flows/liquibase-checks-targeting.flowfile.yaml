@@ -66,7 +66,7 @@ stages:
 
           ARGS=(--targeting-file="${TARGETING_FILE}" --checks-settings-file="${CHECKS_SETTINGS_FILE}")
 
-          echo "Running: liquibase checks targeting list (FULL) ${ARGS[@]}"
+          echo "Running: liquibase checks targeting list ${ARGS[@]}"
           liquibase checks targeting list "${ARGS[@]}"
 
 ## The endStage ALWAYS RUNS. 
