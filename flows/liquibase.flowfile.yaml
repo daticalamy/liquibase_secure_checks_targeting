@@ -2,18 +2,17 @@
 ##########  learn more http://docs.liquibase.com/flow  ##########
 
 globalVariables:
-  ENV: ${ENVIRONMENT}
-  UTILITY: ${LB_UTILITY}
-  CHECKNAME: ${LB_CHECKNAME}
-  TARGETING_TYPE: ${LB_TARGETING_TYPE}
-  FILTER: ${LB_FILTER}
-  FILTER_VALUE: ${LB_FILTER_VALUE}
-  TARGETING_ID: ${LB_TARGETING_ID}
-  TARGETING_REASON: ${LB_TARGETING_REASON}
-  TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
-  AWS_S3_BUCKET: ${AWS_S3_BUCKET}
-  TARGETING_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml
-  CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
+  UTILITY: targeting_list2
+  CHECKNAME: RollbackRequired
+  TARGETING_TYPE: ignore
+  FILTER: teams
+  FILTER_VALUE: test
+  TARGETING_ID: test
+  TARGETING_REASON: test
+  TARGETING_EXPIRATION: 2h
+  AWS_S3_BUCKET: asmith-s3-extension-demo
+  TARGETING_FILE: s3://asmith-s3-extension-demo/checks-targeting/liquibase.checks-settings.targeting.yaml
+  CHECKS_SETTINGS_FILE: s3://asmith-s3-extension-demo/checks-targeting/liquibase.checks-settings.conf
 
 stages:
 
@@ -58,11 +57,16 @@ stages:
           echo "Running: liquibase checks targeting remove ${ARGS[@]}"
           liquibase checks targeting remove "${ARGS[@]}"
 
-      - type: liquibase
+      - type: shell
         if: "${UTILITY} == targeting_list"
-        command: checks targeting list
-        cmdArgs: { targeting-file: "${TARGETING_FILE}", checks-settings-file: "${CHECKS_SETTINGS_FILE}" }
-          
+        command: |
+          #!/usr/bin/env bash
+          set -e
+
+          ARGS=(--targeting-file="${TARGETING_FILE}" --checks-settings-file="${CHECKS_SETTINGS_FILE}")
+
+          echo "Running: liquibase checks targeting list ${ARGS[@]}"
+          liquibase checks targeting list "${ARGS[@]}"
 
 ## The endStage ALWAYS RUNS. 
 ## So put actions here which you desire to perform whether previous stages' actions succeed or fail.
@@ -72,5 +76,5 @@ endStage:
   actions:
     - type: liquibase
       command: checks targeting list
-      cmdArgs: { targeting-file: "${TARGETING_FILE}", checks-settings-file: "${CHECKS_SETTINGS_FILE}" }
+      cmdArgs: { targeting-file: "${TARGETING_FILE}", checks-settings-file: "${CHECKS_SETTINGS_FILE}"}
           
