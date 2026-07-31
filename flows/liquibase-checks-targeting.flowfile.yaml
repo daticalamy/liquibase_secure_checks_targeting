@@ -71,6 +71,7 @@ stages:
 endStage:
   actions:
     - type: liquibase
+      if: "${UTILITY} != targeting_list"
       command: checks targeting list
       cmdArgs: { targeting-file: "${TARGETING_FILE}", checks-settings-file: "${CHECKS_SETTINGS_FILE}" }
           
