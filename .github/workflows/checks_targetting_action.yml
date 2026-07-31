@@ -24,9 +24,9 @@ on:
         - targeting_remove
 
       targeting_checkname:
-        description: 'Check name to target'
+        description: 'Check name to target (required for targeting_add)'
         type: choice
-        required: true
+        required: false
         options:
           - SqlGrantWarn                # Warn on Detection of 'GRANT' Statements
           - SqlRevokeWarn                # Warn on Detection of 'REVOKE' Statements
@@ -45,6 +45,7 @@ on:
         type: choice
         required: false
         options:
+        - ''  
         - conditions
         - keywords
         - releases
@@ -112,7 +113,7 @@ env:
   LIQUIBASE_COMMAND_DEFAULT_SCHEMA_NAME: abc
 
   # Search path (See https://docs.liquibase.com/concepts/changelogs/how-liquibase-finds-files.html)
-  LIQUIBASE_SEARCH_PATH: flows,checks,changelogs
+  LIQUIBASE_SEARCH_PATH: flows,changelogs
 
   # The database changelog. See https://docs.liquibase.com/concepts/changelogs/working-with-changelogs.html
   LIQUIBASE_COMMAND_CHANGELOG_FILE: rootchangelog.yaml
@@ -138,6 +139,8 @@ env:
   LB_TARGETING_REASON: ${{ inputs.targeting_reason }}
 
   LIQUIBASE_COMMAND_CHECKS_TARGETING_ADD_AUTO_UPDATE: false
+  LIQUIBASE_COMMAND_CHECKS_TARGETING_LIST_AUTO_UPDATE: false
+  LIQUIBASE_COMMAND_CHECKS_RUN_CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
 
 jobs:
   #########################################################################
