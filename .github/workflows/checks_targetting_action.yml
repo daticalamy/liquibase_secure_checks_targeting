@@ -45,6 +45,7 @@ on:
         type: choice
         required: false
         options:
+        - ''  
         - conditions
         - keywords
         - releases
@@ -138,6 +139,7 @@ env:
   LB_TARGETING_REASON: ${{ inputs.targeting_reason }}
 
   LIQUIBASE_COMMAND_CHECKS_TARGETING_ADD_AUTO_UPDATE: false
+  LIQUIBASE_COMMAND_CHECKS_RUN_CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
 
 jobs:
   #########################################################################

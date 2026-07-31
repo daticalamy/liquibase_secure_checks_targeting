@@ -13,7 +13,7 @@ globalVariables:
   TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
   AWS_S3_BUCKET: ${AWS_S3_BUCKET}
   TARGETING_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml
-  LIQUIBASE_COMMAND_CHECKS_RUN_CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
+  CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
 
 stages:
 
@@ -26,9 +26,9 @@ stages:
           #!/usr/bin/env bash
           set -e
 
-          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="${TARGETING_FILE}")
+          ARGS=(--checkname="${CHECKNAME}" --type="${TARGETING_TYPE}" --targeting-file="${TARGETING_FILE}" --checks-settings-file="${CHECKS_SETTINGS_FILE}")
 
-          if [[ -n "${FILTER}" && -n "${FILTER_VALUE}" ]]; then
+          if [[ -n "${FILTER}" && -n "${FILTER_VALUE}" && "${FILTER_VALUE}" != "''" && "${FILTER}" != "''" ]]; then
             ARGS+=("--${FILTER}-filter=${FILTER_VALUE}")
           fi
 
@@ -53,7 +53,7 @@ stages:
           #!/usr/bin/env bash
           set -e
 
-          ARGS=(--id="${TARGETING_ID}" --targeting-file="${TARGETING_FILE}")
+          ARGS=(--id="${TARGETING_ID}" --targeting-file="${TARGETING_FILE}" --checks-settings-file="${CHECKS_SETTINGS_FILE}")
 
           echo "Running: liquibase checks targeting remove ${ARGS[@]}"
           liquibase checks targeting remove "${ARGS[@]}"
@@ -64,7 +64,7 @@ stages:
           #!/usr/bin/env bash
           set -e
 
-          ARGS=(--targeting-file="TARGETING_FILE")
+          ARGS=(--targeting-file="${TARGETING_FILE}" --checks-settings-file="${CHECKS_SETTINGS_FILE}")
 
           echo "Running: liquibase checks targeting list (FULL) ${ARGS[@]}"
           liquibase checks targeting list "${ARGS[@]}"
