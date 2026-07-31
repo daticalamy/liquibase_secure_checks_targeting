@@ -13,6 +13,7 @@ globalVariables:
   TARGETING_EXPIRATION: ${LB_TARGETING_EXPIRATION}
   AWS_S3_BUCKET: ${AWS_S3_BUCKET}
   TARGETING_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.targeting.yaml
+  LIQUIBASE_COMMAND_CHECKS_RUN_CHECKS_SETTINGS_FILE: s3://${AWS_S3_BUCKET}/checks-targeting/liquibase.checks-settings.conf
 
 stages:
 
