@@ -6,4 +6,5 @@ CREATE TABLE my_table (
     name VARCHAR(255) NOT NULL
 );
 
-
+--changeset asmith:grant-001
+GRANT USAGE ON SCHEMA public TO postgres;

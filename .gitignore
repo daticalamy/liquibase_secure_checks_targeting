@@ -5,3 +5,4 @@ liquibase.properties
 .liquibase
 data/
 generatechangelogs/
+insights-recovery.ndjson

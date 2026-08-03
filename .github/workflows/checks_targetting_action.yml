@@ -165,6 +165,24 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE }}
         aws-region: ${{ vars.AWS_REGION }}
 
+    - name: Normalize Targeting Inputs
+      shell: bash
+      run: |
+        # Trim leading/trailing whitespace (including tabs/newlines pasted in by mistake)
+        # from the free-text targeting inputs before they're used anywhere downstream.
+        trim() {
+          local s="$1"
+          s="${s#"${s%%[![:space:]]*}"}"
+          s="${s%"${s##*[![:space:]]}"}"
+          printf '%s' "$s"
+        }
+ 
+        {
+          echo "LB_TARGETING_ID=$(trim "${{ inputs.targeting_id }}")"
+          echo "LB_TARGETING_EXPIRATION=$(trim "${{ inputs.targeting_expiration }}")"
+          echo "LB_FILTER_VALUE=$(trim "${{ inputs.targeting_filter_value }}")"
+        } >> "$GITHUB_ENV"
+
     - name: Log Inputs
       shell: bash
       run: |
