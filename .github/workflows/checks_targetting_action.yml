@@ -52,12 +52,12 @@ on:
         - teams
 
       targeting_filter_value:
-        description: 'Targeting filter value'
+        description: 'Targeting filter value (prefix with @ to match only changesets with that attribute, e.g. @team_a)'
         type: string
         required: false
 
       targeting_expiration:
-        description: 'Targeting expiration (eg. 2h, 30m, 24h30m, 2w3d)'
+        description: 'Targeting expiration (eg. 2h, 30m, 24h30m, 2w3d OR YYYY-MM-DDTHH:MM:SSZ)'
         type: string
         required: false
 

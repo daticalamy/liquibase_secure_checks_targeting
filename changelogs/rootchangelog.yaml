@@ -1,8 +1,10 @@
 databaseChangeLog:
 
-- include:
-    file: tables/changelog.sql
-    relativeToChangelogFile: true
+- modifyChangeSets:
+    teams: team_b
+    include:
+      - file: tables/changelog.sql
+      - relativeToChangelogFile: true
 - include:
     file: views/changelog.yaml
     relativeToChangelogFile: true
