@@ -6,3 +6,4 @@ liquibase.properties
 data/
 generatechangelogs/
 insights-recovery.ndjson
+checks/
