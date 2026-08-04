@@ -57,7 +57,7 @@ on:
         required: false
 
       targeting_expiration:
-        description: 'Targeting expiration (eg. 2h, 30m, 24h30m, 2w3d OR YYYY-MM-DDTHH:MM:SSZ)'
+        description: 'Targeting expiration (eg. 2h, 30m, 24h30m, 2w3d OR YYYY-MM-DDTHH:MM:SS)'
         type: string
         required: false
 
