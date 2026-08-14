@@ -1,7 +1,7 @@
 databaseChangeLog:
 
 - modifyChangeSets:
-    teams: team_b
+    teams: team_c
     include:
       - file: tables/changelog.sql
       - relativeToChangelogFile: true
@@ -12,7 +12,7 @@ databaseChangeLog:
     file: functions/changelog.yaml
     relativeToChangelogFile: true
 - include:
-    file: procedures/changelog.yaml
+    file: procedures/changelog.sql
     relativeToChangelogFile: true
 - include:
     file: triggers/changelog.yaml
