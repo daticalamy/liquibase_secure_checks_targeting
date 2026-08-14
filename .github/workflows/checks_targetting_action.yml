@@ -52,7 +52,7 @@ on:
         - teams
 
       targeting_filter_value:
-        description: 'Targeting filter value (prefix with @ to match only changesets with that attribute, e.g. @team_a)'
+        description: 'Targeting filter value'
         type: string
         required: false
 
@@ -76,8 +76,8 @@ on:
         type: choice
         required: false
         options:
-        - ignore
-        - include
+        - exempt
+        - restrict
 
 ####################################################################
 ### Include permissions for OIDC

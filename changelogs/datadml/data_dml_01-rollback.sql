@@ -1,1 +1,1 @@
-DELETE FROM TABLE_01 WHERE JOB_ID = 1;
+DELETE FROM my_table WHERE name = 'Amy Smith';
