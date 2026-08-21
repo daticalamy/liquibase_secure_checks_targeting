@@ -17,18 +17,25 @@ runs:
     #   1. Delete/comment out the "Use installed Liquibase" step below
     #   2. Uncomment the "Setup Liquibase Secure" step below
     # ============================================================
-    - name: Use installed Liquibase
-      shell: bash
-      run: |
-        if [ ! -x /opt/liquibase/liquibase/liquibase ]; then
-          echo "::error::/opt/liquibase/liquibase/liquibase not found or not executable"
-          exit 1
-        fi
-        echo "/opt/liquibase" >> "$GITHUB_PATH"
-        /opt/liquibase/liquibase/liquibase --version
+    # - name: Use installed Liquibase
+    #   shell: bash
+    #   run: |
+    #     if [ ! -x /opt/liquibase/liquibase/liquibase ]; then
+    #       echo "::error::/opt/liquibase/liquibase/liquibase not found or not executable"
+    #       exit 1
+    #     fi
+    #     echo "/opt/liquibase" >> "$GITHUB_PATH"
+    #     /opt/liquibase/liquibase/liquibase --version
 
     # - name: Setup Liquibase Secure
     #   uses: liquibase/setup-liquibase@v2
     #   with:
     #     version: '5.2.1'
     #     edition: 'secure'
+
+    - name: Setup Liquibase Secure
+      uses: liquibase/setup-liquibase@v3
+      with:
+        version: '6.0.0-RC4'
+        edition: 'secure'
+        download-url-base: 'https://preview.liquibase.com/non-releases/secure/6.0.0-RC4/liquibase-secure-6.0.0-RC4.tar.gz'
